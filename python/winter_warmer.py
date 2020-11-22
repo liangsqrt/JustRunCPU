@@ -30,6 +30,7 @@ def get_logger(pid, level=logging.DEBUG, when='midnight', back_count=0):
     ch.setFormatter(formatter)
     logger.addHandler(fh)
     logger.addHandler(ch)
+    logger.warning("log创建成功")
     return logger
 
 
@@ -51,20 +52,17 @@ def executer(interval=20):
                 logger.info("总体占用:{}, 用户占比:{}, 系统占比:{}".format(_cpu[0], _cpu[1], _cpu[2]))
 
 
-
-
 if __name__ == '__main__':
     threshold = 0.8
     total_time = 1*3600
 
     time1 = time.time()
+    process_list = []
     while True:
         time.sleep(2)
         cpu_info = psutil.cpu_times(percpu=True)
         total = sum([(x.user + x.system + x.nice)/(x.user + x.system + x.nice + x.idle) for x in cpu_info])/len(cpu_info)
         print(total)
-
-        process_list = []
         if total < threshold and time.time()-time1 < total_time:
             process = multiprocessing.Process(target=executer, args=(20,))
             process.start()
