@@ -64,8 +64,8 @@ if __name__ == '__main__':
         print(total)
         if total < threshold and time.time()-time1 < total_time:
             process = multiprocessing.Process(target=execute, args=(20,))
-            process.start()
             process.daemon = True
+            process.start()
             process_list.append(process)
         if time.time() - time1 > total_time:
             break
