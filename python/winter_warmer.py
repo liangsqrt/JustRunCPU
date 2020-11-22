@@ -13,7 +13,7 @@ BaseDir = os.path.dirname(__file__)
 LogDir = os.path.join(BaseDir, "logs")
 
 
-def get_logger(pid, level=logging.DEBUG, when='midnight', back_count=0):
+def get_logger(pid, level=logging.DEBUG, back_count=0):
     logger = logging.getLogger(str(pid))
     log_path = os.path.join(LogDir, datetime.datetime.now().strftime("%Y_%m_%d_%H_")+str(pid)+".log")
     if not os.path.exists(LogDir):
@@ -21,7 +21,6 @@ def get_logger(pid, level=logging.DEBUG, when='midnight', back_count=0):
     formatter = logging.Formatter('%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s')
     fh = TimedRotatingFileHandler(
         filename=log_path,
-        when=when,
         backupCount=back_count,
         encoding='utf-8')
     fh.setLevel(level)
@@ -34,7 +33,7 @@ def get_logger(pid, level=logging.DEBUG, when='midnight', back_count=0):
     return logger
 
 
-def executer(interval=20):
+def execute(interval=20):
     pid = os.getpid()
     print(pid)
     logger = get_logger(pid=pid)
@@ -64,8 +63,9 @@ if __name__ == '__main__':
         total = sum([(x.user + x.system + x.nice)/(x.user + x.system + x.nice + x.idle) for x in cpu_info])/len(cpu_info)
         print(total)
         if total < threshold and time.time()-time1 < total_time:
-            process = multiprocessing.Process(target=executer, args=(20,))
+            process = multiprocessing.Process(target=execute, args=(20,))
             process.start()
+            process.daemon = True
             process_list.append(process)
         if time.time() - time1 > total_time:
             break
