@@ -71,8 +71,9 @@ def run():
             break
 
     print("等待进程结束")
-    for _p in process_list:
-        _p.join()
+    # for _p in process_list:
+    #     _p.join()
+    return process_list
 
 
 
